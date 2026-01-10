@@ -1,0 +1,25 @@
+---
+---
+
+/* prettier-ignore */
+@use 'main
+{%- if jekyll.environment == 'production' -%}
+  .bundle
+{%- endif -%}
+';
+
+/* append your custom style below */
+#sidebar .profile-wrapper { /* 프로필 래퍼 */ 
+  display: flex; /* 플렉스 */ 
+  flex-direction: column; /* 세로 정렬 */ 
+  align-items: center; /* 가로 가운데 */ 
+  text-align: center; /* 텍스트 가운데 */ 
+  padding-left: 0; /* 좌 패딩 제거 */ 
+  padding-right: 0; /* 우 패딩 제거 */ 
+}
+
+#sidebar #avatar { /* 아바타 */ 
+  box-shadow: none !important; /* 테두리/링 제거 */ 
+  outline: none !important; /* 혹시 outline 있으면 제거 */ 
+  border: none !important; /* 혹시 border 있으면 제거 */ 
+}
