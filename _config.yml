@@ -43,7 +43,7 @@ social:
 
 # Site Verification Settings
 webmaster_verifications:
-  google: # fill in your Google verification code
+  google: "H3qx-E-8aCLP7vGf3FjMQHZL1xkYBX290Im-exle0jU" # fill in your Google verification code
   bing: # fill in your Bing verification code
   alexa: # fill in your Alexa verification code
   yandex: # fill in your Yandex verification code
