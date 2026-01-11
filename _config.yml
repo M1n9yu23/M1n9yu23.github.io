@@ -16,7 +16,7 @@ timezone: Asia/Seoul
 
 title: Gyutex # the main title
 
-tagline: Mingyu Son # it will display as the subtitle
+tagline: MinGyu Son # it will display as the subtitle
 
 description: >- # used by seo meta and the atom feed
   A personal blog about Android and Wear OS development
@@ -31,7 +31,7 @@ github:
 social:
   # Change to your full name.
   # It will be displayed as the default author of the posts and the copyright owner in the Footer
-  name: Mingyu Son
+  name: MinGyu Son
   email: # change to your email address
   links:
     # The first element serves as the copyright owner's link
