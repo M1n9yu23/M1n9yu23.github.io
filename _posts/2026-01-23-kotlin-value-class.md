@@ -81,7 +81,7 @@ fun recordVitalSign(heartRate: HeartRate, spO2: SpO2) {
 }
 ```
 
-이제 `recordVitalSign`에 잘못된 타입(heartRate 자리에 SpO2)을 넘기면 컴파일 에러가 발생하여 실수를 방지할 수 있습니다.
+이제 `recordVitalSign`을 호출할 때 잘못된 데이터(heartRate 자리에 SpO2 data)를 넘기면 컴파일 에러가 발생하여 실수를 방지할 수 있습니다.
 
 ### 특징 및 제약 사항
 
