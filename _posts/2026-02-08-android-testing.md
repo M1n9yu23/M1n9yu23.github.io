@@ -14,8 +14,8 @@ description: "테스트가 구현 세부 사항에 결합되면 리팩토링의 
 
 ```kotlin
 @Test
-fun `데이터 로드 시 리포지토리 호출 검증`() {
-    `when`(userRepository.fetchUser(anyString()))
+fun loadData_delegatesToRepository() {
+    Mockito.`when`(userRepository.fetchUser(anyString()))
         .thenReturn(flowOf(Result.success(User("Mingyu"))))
 
     viewModel.loadData()
@@ -34,11 +34,14 @@ fun `데이터 로드 시 리포지토리 호출 검증`() {
 
 Android 공식 문서의 'Test Doubles' 섹션에서는 Fakes를 우선적으로 사용할 것을 명시하고 있습니다.
 
-**Fake**란 프로덕션에는 적합하지 않지만 테스트에는 적합한(In-Memory DB) **Test Double**입니다. 내부 로직은 `List`, `Map`등을 사용하여 단순하고 빠르게 동작합니다.
+**Fake**란 프로덕션에는 적합하지 않지만 테스트에는 적합한(In-Memory DB) **Test Double**입니다.
+
+내부 로직은 `List`, `Map`등을 사용하여 단순하고 빠르게 동작합니다.
 
 ## 3. 구현 가이드
 
-Fakes를 사용하면 '함수가 호출되었는가'가 아닌 **시스템의 상태가 기대한 대로 변경되었는가**를 검증할 수 있습니다.
+Fakes를 사용하면 '함수가 호출되었는가'가 아닌 **시스템의 상태가 기대한 대로 변경되었는가**를 검증할 수 있습니다. 
+
 사용자 데이터를 다루는 예시로 살펴보겠습니다.
 
 #### Step 1: 인터페이스 정의
@@ -85,7 +88,7 @@ class FakeUserRepository : UserRepository {
 
 ```kotlin
 @Test
-fun `사용자 데이터 로드 성공 시나리오`() = runTest {
+fun loadUser_whenSuccess_updatesUiState() = runTest {
     val fakeRepo = FakeUserRepository()
     val testUser = User(id = "user_1", name = "Mingyu")
     fakeRepo.emitUser(testUser)
@@ -127,9 +130,8 @@ suspend fun fetchData(): String {
     return "MinGyu!!"
 }
 
-
 @Test
-fun `데이터 로드 시 지연 시간 건너뛰기`() = runTest {
+fun fetchData_skipsDelay_inTest() = runTest {
     val data = fetchData() 
     assertEquals("MinGyu!!", data)
 }
@@ -152,7 +154,9 @@ fun `데이터 로드 시 지연 시간 건너뛰기`() = runTest {
 
 #### Best Practice 1: Dispatcher 주입
 
-프로덕션 코드에 `Dispatchers.IO`등을 하드코딩하면 테스트에서 제어할 수 없습니다. 생성자를 통해 Dispatcher를 주입받도록 설계하여, 테스트 시에는 `TestDispatcher`로 교체해야 합니다.
+프로덕션 코드에 `Dispatchers.IO`등을 하드코딩하면 테스트에서 제어할 수 없습니다. 
+
+생성자를 통해 Dispatcher를 주입받도록 설계하여, 테스트 시에는 `TestDispatcher`로 교체해야 합니다.
 
 ```kotlin
 // Bad
@@ -172,7 +176,7 @@ class Repository(
 
 Local Unit Test는 안드로이드 기기가 아닌 JVM에서 실행되므로, 안드로이드의 `Main`스레드(UI 스레드)가 존재하지 않습니다. 따라서 `ViewModel` 등을 테스트할 때는 `Dispatchers.Main`을 `TestDispatcher`로 교체해야 합니다.
 
-실제 UI 스레드가 제공되는 `Instrumented test`에서 Main 디스패처를 교체해서는 안 됩니다.
+실제 UI 스레드가 제공되는 `Instrumented test`등 에서 Main 디스패처를 교체해서는 안 됩니다.
 
 이를 매번 작성하는 대신, JUnit Rule로 만들어 재사용하는 것이 표준 패턴입니다.
 
@@ -194,7 +198,7 @@ class HomeViewModelTest {
     val mainDispatcherRule = MainDispatcherRule()
 
     @Test
-    fun `초기 데이터 로드 검증`() = runTest {
+    fun init_loadsData_automatically() = runTest {
         val viewModel = HomeViewModel()
         
         // 검증 로직 ...
@@ -204,7 +208,11 @@ class HomeViewModelTest {
 
 ## 결론
 
-테스트 코드는 시스템의 무결성을 보장하는 가장 강력한 수단입니다. 가이드라인에 따라 **자신이 소유한 타입**에는 Mock 대신 Fake를 적용하세요. 유지보수 가능한 로직을 구축하는 전략 중 하나는 '테스트하기 좋은 구조'를 만드는 것입니다.
+테스트 코드는 시스템의 무결성을 보장하는 가장 강력한 수단입니다. 가이드라인에 따라 **자신이 소유한 타입**에는 Mock 대신 Fake를 적용하세요. 
+
+테스트는 단순히 버그를 찾는 수단이 아닙니다. 개발자가 해당 소프트웨어의 비즈니스 로직이나 작동 방식을 명확히 정의하는 과정이며, 리팩토링 시 발생할 수 있는 결함을 사전에 차단하는 가장 정교한 **안전장치**입니다.
+
+결국 **테스트 가능한 구조가 곧 코드의 품질이며, 유지보수 가능한 아키텍처의 핵심**임을 잊지 마세요.
 
 ## Learn More
 
